@@ -22,7 +22,7 @@ def cleantext(complaints, i):
     complaints[i] = complaints[i].lower() #converted the cases to low
     complaints[i] = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", complaints[i]) #removed unicode characters
     complaints[i] = complaints[i].replace("xxxx", "") #removed xxxx 
-complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Complaint6, Complaint7, Complaint8, Complaint9, Complaint10, Complaint11, Complaint12, Complaint13, Complaint14, Complaint15, Complaint16]
+complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Complaint6, Complaint7, Complaint8, Complaint9, Complaint10, Complaint11, Complaint12, Complaint13, Complaint14, Complaint15, Complaint16, Complaint17]
 list(map(lambda i:cleantext(complaints, i), range(0, len(complaints))))
 
 
