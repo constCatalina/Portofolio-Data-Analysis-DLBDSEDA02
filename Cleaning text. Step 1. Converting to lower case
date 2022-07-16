@@ -18,7 +18,7 @@ Complaint17 = "I am a victim of identity theft I have contacted credit bureaus o
 
 def tolowercase(complaints, i):
     complaints[i] = complaints[i].lower()
-complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Complaint6, Complaint7, Complaint8, Complaint9, Complaint10, Complaint11, Complaint12, Complaint13, Complaint14, Complaint15, Complaint16]
+complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Complaint6, Complaint7, Complaint8, Complaint9, Complaint10, Complaint11, Complaint12, Complaint13, Complaint14, Complaint15, Complaint16, Complaint17]
 list(map(lambda i:tolowercase(complaints, i), range(0, len(complaints))))
 
 print(complaints)
