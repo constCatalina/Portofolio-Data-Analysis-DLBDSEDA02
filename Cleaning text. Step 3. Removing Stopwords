@@ -75,7 +75,7 @@ Complaint15 = Complaint15.replace("XXXX", "")
 Complaint16 = Complaint16.replace("XXXX", "")
 Complaint17 = Complaint17.replace("XXXX", "")
 
-Complaint1 = ' '.join([word for word in text.split() if word not in (stopwords.words('english'))])
+Complaint1 = ' '.join([word for word in Complaint1.split() if word not in (stopwords.words('english'))])
 
 
 print (Complaint1)
