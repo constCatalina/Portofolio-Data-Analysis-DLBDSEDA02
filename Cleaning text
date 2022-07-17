@@ -1,8 +1,10 @@
 import re
 import nltk.corpus
 nltk.download('stopwords')
+nltk.download('punkt')
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+
 
 
 Complaint1 = "Attempts to collect debt not owed. CFPB is trying to collect a debt that is not mine, not owed and is inaccurate." 
@@ -29,12 +31,47 @@ def cleantext(complaints, i):
     complaints[i] = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", complaints[i]) #removed unicode characters
     complaints[i] = complaints[i].replace("xxxx", "") #removed xxxx 
     complaints[i] = ' '.join([word for word in complaints[i].split() if word not in (stopwords.words('english'))])
+    complaints[i] = nltk.word_tokenize(complaints[i]) #tockenized the words in each 
 
 complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Complaint6, Complaint7, Complaint8, Complaint9, Complaint10, Complaint11, Complaint12, Complaint13, Complaint14, Complaint15, Complaint16, Complaint17]
 list(map(lambda i:cleantext(complaints, i), range(0, len(complaints))))
 
 
-print(complaints)
+Complaint1 = complaints[0];
+Complaint2 = complaints[1]
+Complaint3 = complaints[2]
+Complaint4 = complaints[3]
+Complaint5 = complaints[4]
+Complaint6 = complaints[5]
+Complaint7 = complaints[6]
+Complaint8 = complaints[7]
+Complaint9 = complaints[8]
+Complaint10 = complaints[9]
+Complaint11 = complaints[10]
+Complaint12 = complaints[11]
+Complaint13 = complaints[12]
+Complaint14 = complaints[13]
+Complaint15 = complaints[14]
+Complaint16 = complaints[15]
+Complaint17 = complaints[16]
+
+print (Complaint1)
+print (Complaint2)
+print (Complaint3)
+print (Complaint4)
+print (Complaint5)
+print (Complaint6)
+print (Complaint7)
+print (Complaint8)
+print (Complaint9)
+print (Complaint10)
+print (Complaint11)
+print (Complaint12)
+print (Complaint13)
+print (Complaint14)
+print (Complaint15)
+print (Complaint16)
+print (Complaint17)
 
 """ import re
 import nltk.corpus
