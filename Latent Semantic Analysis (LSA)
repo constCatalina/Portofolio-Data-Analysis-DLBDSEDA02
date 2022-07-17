@@ -210,10 +210,10 @@ model = vectorizer.fit_transform(complaints)
 data=pd.DataFrame(model.toarray(),columns=vectorizer.get_feature_names())
 
 vectorizer = TfidfVectorizer(use_idf=True,
-max_features=5,
+max_features=19,
 smooth_idf=True)
 model = vectorizer.fit_transform(complaints)
-LSA_model = TruncatedSVD(n_components=2,
+LSA_model = TruncatedSVD(n_components=17,
 algorithm='randomized',
 n_iter=10)
 lsa = LSA_model.fit_transform(model)
