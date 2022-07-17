@@ -35,7 +35,7 @@ complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Compla
 list(map(lambda i:cleantext(complaints, i), range(0, len(complaints))))
 
 
-Complaint1 = complaints[0];
+Complaint1 = complaints[0]
 Complaint2 = complaints[1]
 Complaint3 = complaints[2]
 Complaint4 = complaints[3]
