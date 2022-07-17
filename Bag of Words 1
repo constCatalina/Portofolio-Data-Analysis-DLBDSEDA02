@@ -1,27 +1,29 @@
 import re
-import numpy as np
 import nltk.corpus
 nltk.download('stopwords')
 from nltk.corpus import stopwords
-
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+import pandas as pd
+import numpy as np
 
 
 Complaint1 = "Attempts to collect debt not owed. CFPB is trying to collect a debt that is not mine, not owed and is inaccurate." 
 Complaint2 = "Credit not correct, Information belongs to someone else"
-Complaint3 = "I would like to request the suppression of the following items from my credit report, which are the result of my falling victim to identity theft. This information does not relate to [ transactions that I have made/accounts that I have opened ], as the attached supporting documentation can attest. As such, it should be blocked from appearing on my credit report pursuant to section 605B of the Fair Credit Reporting Act."
+Complaint3 = "I would like to request the suppression of the following items from my credit report, which are the result of my falling victim to identity theft. This information does not relate to [ transactions that I have made/accounts that I have opened ], as the attached supporting documentation can attest. As such, it should be blocked from appearing on my credit report pursuant to section XXXX of the Fair Credit Reporting Act."
 Complaint4 = "Over the past 2 weeks, I have been receiving excessive amounts of telephone calls from the company listed in this complaint. The calls occur between XXXX XXXX and XXXX XXXX to my cell and at my job. The company does not have the right to harass me at work and I want this to stop. It is extremely distracting to be told 5 times a day that I have a call from this collection agency while at work." 
 Complaint5 = "I settled a XXXX XXXX collection balance with a law firm. ( Account number XXXX ) I attached the SETTLED IN FULL letter to the disputes at the bureaus. The bureaus left a balance on the file. This is a violation of my rights under the Fair Credit Reporting Act."
-Complaint6 = "I was sold access to an event digitally, of which I have all the screenshots to detail the transactions, transferred the money and was provided with only a fake of a ticket. I have reported this to paypal and it was for the amount of {$21.00} including a {$1.00} fee from paypal."
+Complaint6 = "I was sold access to an event digitally, of which I have all the screenshots to detail the transactions, transferred the money and was provided with only a fake of a ticket. I have reported this to paypal and it was for the amount of {$ XXXX } including a {$ XXXX } fee from paypal."
 Complaint7 = "While checking my credit report I noticed three collections by a company called ARS that i was unfamiliar with. I disputed these collections with XXXX, and XXXX and they both replied that they contacted the creditor and the creditor verified the debt so I asked for proof which both bureaus replied that they are not required to prove anything. I then mailed a certified letter to ARS requesting proof of the debts n the form of an original aggrement, or a proof of a right to the debt, or even so much as the process as to how the bill was calculated, to which I was simply replied a letter for each collection claim that listed my name an account number and an amount with no other information to verify the debts after I sent a clear notice to provide me evidence. Afterwards I recontacted both XXXX, and XXXX, to redispute on the premise that it is not my debt if evidence can not be drawn up, I feel as if I am being personally victimized by ARS on my credit report for debts that are not owed to them or any party for that matter, and I feel discouraged that the credit bureaus who control many aspects of my personal finances are so negligent about my information." 
 Complaint8 = "I would like the credit bureau to correct my XXXX XXXX XXXX XXXX balance. My correct balance is XXXX" 
 Complaint9 = "MY NAME IS XXXX XXXX XXXX I live at XXXX XXXX XXXX XXXX XXXX SC XXXX My DOB XXXX my SS XXXX. I have addresses on my file that are not mine please remove the following addresses : XXXX XXXX XXXX XXXX XXXX XXXX, XXXX  I have attach my proof of ID and address."
 Complaint10 = "Today XX/XX/XXXX went online to dispute the incorrect personal information and it says This request can not be processed online"
-Complaint11 = "XXXX is reporting incorrectly to Equifax and XXXX an account balance of {$2300.00} on the XXXX partial account number XXXX. ( Please see pages 12 and 13 of the attached credit report ). This account is over 7 years old and therefore should not be on my credit report. This incorrect reporting is harming my credit score and is a Fair Credit Reporting Act ( F.C.R.A. ) violation." 
+Complaint11 = "XXXX is reporting incorrectly to Equifax and XXXX an account balance of {$ XXXX } on the XXXX partial account number XXXX. This account is over 7 years old and therefore should not be on my credit report. This incorrect reporting is harming my credit score and is a Fair Credit Reporting Act ( F.C.R.A. ) violation." 
 Complaint12 = "Please reverse the late payments reported on the following accounts : XXXX XXXX XXXX XXXX XXXX XXXX XXXX The accounts were never past due, I never made a late payment to this company ever please change this, I have a good relationship with these companies." 
-Complaint13 = "ALL THREE CREDIT BUREAUS ARE STILL PUTTING FRAUD ALERTS ON MY CREDIT REPORT WITHOUT MY PERMISSION. IT SEEMS XXXX IS THE ONE INITIATING THIS AND THEN TELLING THE OTHER BUREAUS TO FOLLOW THEIR LEAD. THIS IS ILLEGAL, I HAVE NOT REQUESTED THAT ANY FRAUD ALERT BE PUT ON MY CREDIT FILE. I CHALLENGE THEM ON THE FCRA SECTION 609 TO REMOVE NEGATIVE REMARKS, STATEMENTS AND CREDIT INQUIRIES THAT WERE SUPPOSED TO BE SOFT PULLS AND NOT HARD PULLS AND THESE BUREAUS TRY TO SLIDE PAST THE LAW AND PUT THESE BOGUS FRAUD ALERTS ON MY FILES TO JUSTIFY THEIR ILLEGAL ACTIVITIES."
+Complaint13 = "ALL THREE CREDIT BUREAUS ARE STILL PUTTING FRAUD ALERTS ON MY CREDIT REPORT WITHOUT MY PERMISSION. IT SEEMS XXXX IS THE ONE INITIATING THIS AND THEN TELLING THE OTHER BUREAUS TO FOLLOW THEIR LEAD. THIS IS ILLEGAL, I HAVE NOT REQUESTED THAT ANY FRAUD ALERT BE PUT ON MY CREDIT FILE. I CHALLENGE THEM ON THE FCRA SECTION XXXX TO REMOVE NEGATIVE REMARKS, STATEMENTS AND CREDIT INQUIRIES THAT WERE SUPPOSED TO BE SOFT PULLS AND NOT HARD PULLS AND THESE BUREAUS TRY TO SLIDE PAST THE LAW AND PUT THESE BOGUS FRAUD ALERTS ON MY FILES TO JUSTIFY THEIR ILLEGAL ACTIVITIES."
 Complaint14 = "I HAD FILED WITH CFPB ON XX/XX/XXXX TO HAVE THE LISTED ACCOUNTS DELETED BY STATING THAT THESE ACCOUNTS WERE NOT MINE AND I UPLOADED MY IDENTITY THEFT REPORT. PRIOR TO XX/XX/ I HAD DISPUTED THESE SAME ACCOUNTS AND SUPPLIED AN IDENTITY THEFT REPORT BUT I HAVE NOT RECEIVED INVESTIGATIVE RESULTS REPORTS FROM XXXX, TRANS UNION OR XXXX. THIS IS THE THIRD ATTEMPT TO DISPUTE THESE FRAUDULENT ACCOUNTS AND I HAVE ATTACHED MY IDENTITY THEFT POLICE REPORT." 
 Complaint15 = "I am a victim of identity theft. The information listed below, which appears on my credit report, does not relate to any transaction that I have made. It is the result of identity theft." 
-Complaint16 = "I received a statement in the mail today, XX/XX/ from Convergent Outsourcing , Inc. stating that XXXX placed my account with their office for collection. The statement states I owe XXXX {$88.00}. I checked my XXXX account balance and it is XXXX. I contacted XXXX and they stated they did not submit my account to a collection agency and reaffirmed that my balance is XXXX. I did not contact Convergent Outsourcing as I think this is a scam. It says on the back of the statement that I need to notify them within 30 days of receiving this notice in order to dispute the validity of the debt. I'm not sure if I should do that because I think it is a scam.  I checked the XXXX XXXX XXXX site and they have had numerous complaints about this company." 
+Complaint16 = "I received a statement in the mail today, XX/XX/ from Convergent Outsourcing , Inc. stating that XXXX placed my account with their office for collection. The statement states I owe XXXX {$ XXXX }. I checked my XXXX account balance and it is XXXX. I contacted XXXX and they stated they did not submit my account to a collection agency and reaffirmed that my balance is XXXX. I did not contact Convergent Outsourcing as I think this is a scam. It says on the back of the statement that I need to notify them within 30 days of receiving this notice in order to dispute the validity of the debt. I'm not sure if I should do that because I think it is a scam.  I checked the XXXX XXXX XXXX site and they have had numerous complaints about this company." 
 Complaint17 = "I am a victim of identity theft I have contacted credit bureaus on numerous occasions to have incorrect or outdated personal information removed, however they are refusing to remove the information stating that the item came back validated even though the information is not correct." 
 
 
@@ -31,9 +33,9 @@ def cleantext(complaints, i):
     complaints[i] = complaints[i].replace("xxxx", "") #removed xxxx 
     complaints[i] = ' '.join([word for word in complaints[i].split() if word not in (stopwords.words('english'))])
     complaints[i] = nltk.word_tokenize(complaints[i]) #tockenized the words in each 
-
 complaints = [Complaint1, Complaint2, Complaint3, Complaint4, Complaint5, Complaint6, Complaint7, Complaint8, Complaint9, Complaint10, Complaint11, Complaint12, Complaint13, Complaint14, Complaint15, Complaint16, Complaint17]
 list(map(lambda i:cleantext(complaints, i), range(0, len(complaints))))
+
 
 Complaint1 = complaints[0]
 Complaint2 = complaints[1]
@@ -54,6 +56,232 @@ Complaint16 = complaints[15]
 Complaint17 = complaints[16]
 
 
+porter = PorterStemmer()
+word_lemmatizer = WordNetLemmatizer()
+
+
+#Stemming and lemmatizing Complaint1
+stem_Complaint=[]
+for word in Complaint1:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint1 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint1:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint1 = stem_Complaint
+
+#Stemming and lemmatizing Complaint2
+stem_Complaint=[]
+for word in Complaint2:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint2 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint2:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint2 = stem_Complaint
+
+#Stemming and lemmatizing Complaint3
+stem_Complaint=[]
+for word in Complaint3:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint3 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint3:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint3 = stem_Complaint
+
+#Stemming and lemmatizing Complaint4
+stem_Complaint=[]
+for word in Complaint4:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint4 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint4:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint4 = stem_Complaint
+
+#Stemming and lemmatizing Complaint5
+stem_Complaint=[]
+for word in Complaint5:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint5 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint5:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint5 = stem_Complaint
+
+#Stemming and lemmatizing Complaint6
+stem_Complaint=[]
+for word in Complaint6:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint6 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint6:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint6 = stem_Complaint
+
+#Stemming and lemmatizing Complaint7
+stem_Complaint=[]
+for word in Complaint7:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint7 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint7:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint7 = stem_Complaint
+
+#Stemming and lemmatizing Complaint8
+stem_Complaint=[]
+for word in Complaint8:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint8 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint8:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint8 = stem_Complaint
+
+#Stemming and lemmatizing Complaint9
+stem_Complaint=[]
+for word in Complaint9:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint9 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint9:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint9 = stem_Complaint
+
+#Stemming and lemmatizing Complaint10
+stem_Complaint=[]
+for word in Complaint10:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint10 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint10:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint10 = stem_Complaint
+
+#Stemming and lemmatizing Complaint11
+stem_Complaint=[]
+for word in Complaint11:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint11 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint11:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint11 = stem_Complaint
+
+#Stemming and lemmatizing Complaint12
+stem_Complaint=[]
+for word in Complaint12:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint12 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint12:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint12 = stem_Complaint
+
+#Stemming and lemmatizing Complaint13
+stem_Complaint=[]
+for word in Complaint13:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint13 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint13:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint13 = stem_Complaint
+
+#Stemming and lemmatizing Complaint14
+stem_Complaint=[]
+for word in Complaint14:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint14 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint14:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint14 = stem_Complaint
+
+#Stemming and lemmatizing Complaint15
+stem_Complaint=[]
+for word in Complaint15:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint15 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint15:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint15 = stem_Complaint
+
+#Stemming and lemmatizing Complaint16
+stem_Complaint=[]
+for word in Complaint16:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint16 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint16:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint16 = stem_Complaint
+
+#Stemming and lemmatizing Complaint17
+stem_Complaint=[]
+for word in Complaint17:
+    stem_Complaint.append(porter.stem(word))
+
+Complaint17 = stem_Complaint
+stem_Complaint=[]
+
+for word in Complaint17:
+    stem_Complaint.append(word_lemmatizer.lemmatize(word))
+
+Complaint17 = stem_Complaint
+
+
 wordset1_2 = np.union1d(Complaint1,Complaint2)
 wordset1_3 =  np.union1d(wordset1_2,Complaint3)
 wordset1_4 = np.union1d(wordset1_3,Complaint4)
@@ -72,6 +300,127 @@ wordset1_16 = np.union1d(wordset1_15,Complaint16)
 wordset = np.union1d(wordset1_16,Complaint17)
 
 
+def calculateBOW1(wordset,Complaint1):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint1:
+      tf_diz[word]=Complaint1.count(word)
+  return tf_diz
 
-print(wordset)
+def calculateBOW2(wordset,Complaint2):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint2:
+      tf_diz[word]=Complaint2.count(word)
+  return tf_diz
+
+def calculateBOW3(wordset,Complaint3):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint3:
+      tf_diz[word]=Complaint3.count(word)
+  return tf_diz
+
+def calculateBOW4(wordset,Complaint4):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint4:
+      tf_diz[word]=Complaint4.count(word)
+  return tf_diz
+
+def calculateBOW5(wordset,Complaint5):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint5:
+      tf_diz[word]=Complaint5.count(word)
+  return tf_diz
+
+def calculateBOW6(wordset,Complaint6):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint6:
+      tf_diz[word]=Complaint6.count(word)
+  return tf_diz
+
+def calculateBOW7(wordset,Complaint7):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint7:
+      tf_diz[word]=Complaint7.count(word)
+  return tf_diz
+
+def calculateBOW8(wordset,Complaint8):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint8:
+      tf_diz[word]=Complaint8.count(word)
+  return tf_diz
+
+def calculateBOW9(wordset,Complaint9):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint9:
+      tf_diz[word]=Complaint9.count(word)
+  return tf_diz
+
+def calculateBOW10(wordset,Complaint10):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint10:
+      tf_diz[word]=Complaint10.count(word)
+  return tf_diz
+
+def calculateBOW11(wordset,Complaint11):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint11:
+      tf_diz[word]=Complaint11.count(word)
+  return tf_diz
+
+def calculateBOW12(wordset,Complaint12):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint12:
+      tf_diz[word]=Complaint12.count(word)
+  return tf_diz
+
+def calculateBOW13(wordset,Complaint13):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint13:
+      tf_diz[word]=Complaint13.count(word)
+  return tf_diz
+
+def calculateBOW14(wordset,Complaint14):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint14:
+      tf_diz[word]=Complaint14.count(word)
+  return tf_diz
+
+def calculateBOW15(wordset,Complaint15):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint15:
+      tf_diz[word]=Complaint15.count(word)
+  return tf_diz
+
+def calculateBOW16(wordset,Complaint16):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint16:
+      tf_diz[word]=Complaint16.count(word)
+  return tf_diz
+
+def calculateBOW17(wordset,Complaint17):
+  tf_diz = dict.fromkeys(wordset,0)
+  for word in Complaint17:
+      tf_diz[word]=Complaint17.count(word)
+  return tf_diz
+
+bow1 = calculateBOW1(wordset,Complaint1)
+bow2 = calculateBOW2(wordset,Complaint2)
+bow3 = calculateBOW3(wordset,Complaint3)
+bow4 = calculateBOW4(wordset,Complaint4)
+bow5 = calculateBOW5(wordset,Complaint5)
+bow6 = calculateBOW6(wordset,Complaint6)
+bow7 = calculateBOW7(wordset,Complaint7)
+bow8 = calculateBOW8(wordset,Complaint8)
+bow9 = calculateBOW9(wordset,Complaint9)
+bow10 = calculateBOW10(wordset,Complaint10)
+bow11 = calculateBOW11(wordset,Complaint11)
+bow12 = calculateBOW12(wordset,Complaint12)
+bow13 = calculateBOW13(wordset,Complaint13)
+bow14 = calculateBOW14(wordset,Complaint14)
+bow15 = calculateBOW15(wordset,Complaint15)
+bow16 = calculateBOW16(wordset,Complaint16)
+bow17 = calculateBOW17(wordset,Complaint17)
+
+df_bow = pd.DataFrame([bow1,bow2,bow3,bow4,bow5,bow6,bow7,bow8,bow9,bow10,bow11,bow12,bow13,bow14,bow15,bow16,bow17])
+df_bow.head()
+print(df_bow.head())
 
