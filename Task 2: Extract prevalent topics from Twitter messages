@@ -6,6 +6,8 @@ from nltk.corpus import stopwords
 nltk.download('punkt')
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
+from sklearn.decomposition import TruncatedSVD
 
 API_key = 'NjjwbPkyMWIqZPUteAUT0W6Hz'
 API_key_secret = 'UxaHXHr4DOaVSyaRGpUJ4T08PszNktWIjAZU5nTSTqV99AQJVl'
@@ -31,8 +33,21 @@ list(map(lambda i: cleantext(retrieved_tweets, i), range(0, len(retrieved_tweets
 
 print(retrieved_tweets)
 
-# Create a Vectorizer Object
+# TF-IDF + vectorize object
 vectorizer = TfidfVectorizer(min_df=1)
 model = vectorizer.fit_transform(retrieved_tweets)
 data=pd.DataFrame(model.toarray(),columns=vectorizer.get_feature_names())
-print(data)
+
+""" LDA Model
+lda_model=LatentDirichletAllocation(n_components=5,learning_method='online',random_state=42,)
+lda_top=lda_model.fit_transform(model)
+print("Twitter Topics in Brandenburg: ")
+for i,topic in enumerate(lda_top[0]):
+    print("Topic ",i,": ",topic*100,"%") """
+
+LSA_model = TruncatedSVD(n_components=5, algorithm='randomized', n_iter=10)
+lsa = LSA_model.fit_transform(model)
+l=lsa[0]
+print("Twitter Topics :")
+for i,topic in enumerate(l):
+    print("Topic ",i," : ",topic*100)
