@@ -218,6 +218,6 @@ algorithm='randomized',
 n_iter=10)
 lsa = LSA_model.fit_transform(model)
 l=lsa[0]
-print("Review 0 :")
+print("Topics :")
 for i,topic in enumerate(l):
     print("Topic ",i," : ",topic*100)
