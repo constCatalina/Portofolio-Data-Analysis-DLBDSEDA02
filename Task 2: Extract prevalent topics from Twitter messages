@@ -7,11 +7,11 @@ nltk.download('punkt')
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-API_key = 'ipkhYyK52J29VzFejIQqNz3hV'
-API_key_secret = 'Ddkahazh6ijIAoIQ3urkPEV7OQs7BQOdeiVnveIWusCZJgcqpD'
-Bearer = 'AAAAAAAAAAAAAAAAAAAAADPBewEAAAAAZ2QITI4vVg3M8ke2vfqhk07SUNU%3DkM76lSRMgRMRpyRst5DIc7BaKNIlkFnIsJa6gGO11xDtQWpiMq'
-Access_Token = '1548787055454572544-S8xfljd1us3wYemworDZrgG5GwPQIa'
-Access_Token_Secret = 'U1qeEkFF9Y3QdCA5gPQRAlI1IDcKVUk8NtWM5wVtl97xq'
+API_key = 'NjjwbPkyMWIqZPUteAUT0W6Hz'
+API_key_secret = 'UxaHXHr4DOaVSyaRGpUJ4T08PszNktWIjAZU5nTSTqV99AQJVl'
+Bearer = 'AAAAAAAAAAAAAAAAAAAAAAmsfwEAAAAAJEayb5aUXjPZZdUVGtOPcPba9gs%3DBgRiQIz10Z8c0jXK7tvcEBe8djMbPvJCrfzkyc0xBHx1qkYmUy'
+Access_Token = '1548787055454572544-k9v6yihv68p0mBfQJYorhAH5W3c7NC'
+Access_Token_Secret = 'Q8FlaIe8yS9RY8zLzUQhpYleePduGVrqAPDvk8tOlIqgS'
 
 client = tweepy.Client(bearer_token=Bearer)
 query = "Brandenburg -is:retweet"
