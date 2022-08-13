@@ -1,0 +1,38 @@
+import tweepy
+import re
+import nltk.corpus
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+nltk.download('punkt')
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+API_key = 'ipkhYyK52J29VzFejIQqNz3hV'
+API_key_secret = 'Ddkahazh6ijIAoIQ3urkPEV7OQs7BQOdeiVnveIWusCZJgcqpD'
+Bearer = 'AAAAAAAAAAAAAAAAAAAAADPBewEAAAAAZ2QITI4vVg3M8ke2vfqhk07SUNU%3DkM76lSRMgRMRpyRst5DIc7BaKNIlkFnIsJa6gGO11xDtQWpiMq'
+Access_Token = '1548787055454572544-S8xfljd1us3wYemworDZrgG5GwPQIa'
+Access_Token_Secret = 'U1qeEkFF9Y3QdCA5gPQRAlI1IDcKVUk8NtWM5wVtl97xq'
+
+client = tweepy.Client(bearer_token=Bearer)
+query = "Brandenburg -is:retweet"
+response = client.search_recent_tweets(query=query, max_results=100)
+retrieved_tweets = []
+for tweet in response.data:
+ retrieved_tweets.append(tweet.text)
+
+print(retrieved_tweets)
+
+def cleantext(retrieved_tweets, i):
+ retrieved_tweets[i] = retrieved_tweets[i].lower()  # converted the cases to low
+ retrieved_tweets[i] = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", retrieved_tweets[i])  # removed unicode characters
+ retrieved_tweets[i] = ' '.join([word for word in retrieved_tweets[i].split() if word not in (stopwords.words('english'))])
+
+list(map(lambda i: cleantext(retrieved_tweets, i), range(0, len(retrieved_tweets))))
+
+print(retrieved_tweets)
+
+# Create a Vectorizer Object
+vectorizer = TfidfVectorizer(min_df=1)
+model = vectorizer.fit_transform(retrieved_tweets)
+data=pd.DataFrame(model.toarray(),columns=vectorizer.get_feature_names())
+print(data)
