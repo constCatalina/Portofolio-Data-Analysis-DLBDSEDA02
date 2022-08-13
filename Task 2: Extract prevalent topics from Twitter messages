@@ -16,13 +16,13 @@ Access_Token = '1548787055454572544-k9v6yihv68p0mBfQJYorhAH5W3c7NC'
 Access_Token_Secret = 'Q8FlaIe8yS9RY8zLzUQhpYleePduGVrqAPDvk8tOlIqgS'
 
 client = tweepy.Client(bearer_token=Bearer)
-query = "Brandenburg -is:retweet"
+query = "Wolverhampton -is:retweet"
 response = client.search_recent_tweets(query=query, max_results=100)
 retrieved_tweets = []
 for tweet in response.data:
  retrieved_tweets.append(tweet.text)
 
-print(retrieved_tweets)
+# print(retrieved_tweets)
 
 def cleantext(retrieved_tweets, i):
  retrieved_tweets[i] = retrieved_tweets[i].lower()  # converted the cases to low
@@ -31,17 +31,18 @@ def cleantext(retrieved_tweets, i):
 
 list(map(lambda i: cleantext(retrieved_tweets, i), range(0, len(retrieved_tweets))))
 
-print(retrieved_tweets)
+# print(retrieved_tweets)
 
 # TF-IDF + vectorize object
 vectorizer = TfidfVectorizer(min_df=1)
 model = vectorizer.fit_transform(retrieved_tweets)
 data=pd.DataFrame(model.toarray(),columns=vectorizer.get_feature_names())
 
+# print(data)
 """ LDA Model
 lda_model=LatentDirichletAllocation(n_components=5,learning_method='online',random_state=42,)
 lda_top=lda_model.fit_transform(model)
-print("Twitter Topics in Brandenburg: ")
+print("Twitter Topics in Wolverhampton: ")
 for i,topic in enumerate(lda_top[0]):
     print("Topic ",i,": ",topic*100,"%") """
 
