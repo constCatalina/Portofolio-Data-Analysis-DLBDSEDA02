@@ -209,13 +209,8 @@ vectorizer = TfidfVectorizer(min_df=1)
 model = vectorizer.fit_transform(complaints)
 data=pd.DataFrame(model.toarray(),columns=vectorizer.get_feature_names())
 
-vectorizer = TfidfVectorizer(use_idf=True,
-max_features=19,
-smooth_idf=True)
-model = vectorizer.fit_transform(complaints)
-LSA_model = TruncatedSVD(n_components=17,
-algorithm='randomized',
-n_iter=10)
+
+LSA_model = TruncatedSVD(n_components=5, algorithm='randomized', n_iter=10)
 lsa = LSA_model.fit_transform(model)
 l=lsa[0]
 print("Topics :")
