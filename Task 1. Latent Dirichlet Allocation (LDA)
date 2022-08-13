@@ -216,6 +216,6 @@ vectorizer = TfidfVectorizer(use_idf=True,max_features=5,smooth_idf=True)
 model = vectorizer.fit_transform(complaints)
 lda_model=LatentDirichletAllocation(n_components=2,learning_method='online',random_state=42,)
 lda_top=lda_model.fit_transform(model)
-print("Review 1: ")
+print("Topics: ")
 for i,topic in enumerate(lda_top[0]):
     print("Topic ",i,": ",topic*100,"%")
