@@ -7,6 +7,7 @@ from nltk.stem import WordNetLemmatizer
 import pandas as pd
 import numpy as np
 
+# The complaints have been retrieved from Kaggle. Consumer complaint narrative column of https://www.kaggle.com/code/kbrookshier/cfpb-complaints/data.
 
 Complaint1 = "Attempts to collect debt not owed. CFPB is trying to collect a debt that is not mine, not owed and is inaccurate." 
 Complaint2 = "Credit not correct, Information belongs to someone else"
