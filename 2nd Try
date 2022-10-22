@@ -1,0 +1,24 @@
+import re
+import nltk.corpus
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import LatentDirichletAllocation
+from nltk.tokenize import word_tokenize
+
+
+df = pd.read_csv('complaints.csv')
+# converting the csv 'Issue' column into list
+Complaints_List = list(df['Issue'])
+# converting list into string and then joining it with space
+complaints = ' '.join(str(e) for e in Complaints_List)
+
+# cleaning text
+complaints = complaints.lower() #converted the cases to low
+complaints = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", complaints) #removed unicode characters
+complaints = word_tokenize(complaints) #complaints tokens
+complaints = [word for word in complaints if not word in stopwords.words()]
